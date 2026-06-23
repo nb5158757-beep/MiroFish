@@ -1,0 +1,224 @@
+# 高级记忆系统配置
+# 基于《意识上传记忆系统・完整进化手册》升级
+
+# 分层记忆架构
+memory_layers:
+  # 工作记忆（前额叶）- 当前任务焦点
+  work:
+    path: "./memory/0_work"
+    capacity: 10           # 最大容量
+    ttl: 3600             # 1小时TTL
+    auto_cleanup: true
+    
+  # 短期记忆（24h~7天）
+  short:
+    path: "./memory/1_short"
+    ttl: 604800           # 7天
+    auto_distill: true    # 自动蒸馏到中期
+    
+  # 中期记忆（按天/事件）
+  medium:
+    path: "./memory/2_medium"
+    organization: "daily"  # daily, event, topic
+    auto_archive: true
+    
+  # 长期记忆（蒸馏精华）
+  long:
+    path: "./memory/3_long"
+    format: "rule"        # 规则格式
+    compression_ratio: 0.1 # 保留10%精华
+    
+  # 语义图谱（智谱索引托管）
+  semantic:
+    path: "./memory/4_semantic"
+    provider: "zhipu"
+    auto_sync: true
+    
+  # 遗忘池
+  decay:
+    path: "./memory/5_decay"
+    recovery_window: 2592000  # 30天恢复窗口
+
+# 动态突触权重机制（改进版）
+synapse_weights:
+  # 权重计算因素
+  factors:
+    - name: "usage_frequency"
+      weight: 0.12        # 每次调用增加
+      max_daily: 1.0
+    
+    - name: "decision_impact"
+      weight: 0.3         # 影响决策的重要事件
+      requires_validation: true
+    
+    - name: "time_decay"
+      factor: 0.96        # 每日自然衰减
+      min_weight: 0.18    # 遗忘保护阈值
+    
+    - name: "value_alignment"
+      weight: 0.25        # 与价值核心对齐度
+      source: "value_core/principles.json"
+  
+  # 冲突处理
+  conflict:
+    freeze_threshold: 0.5  # 冲突度超过0.5时冻结权重
+    resolution: "user_input"  # user_input, majority, latest
+  
+  # 权重更新频率
+  update_interval: 3600   # 每小时更新一次
+
+# 价值对齐层
+value_alignment:
+  core_path: "./value_core"
+  layers:
+    - goals.json          # 当前核心目标（可动态更新）
+    - principles.json     # 不可变的价值优先级
+    - success_metric.json # 什么叫"好的输出"
+  
+  # 对齐度计算
+  alignment_metrics:
+    - goal_relevance      # 与当前目标的相关性
+    - principle_match     # 与核心原则的匹配度
+    - success_contribution # 对成功指标的贡献
+
+# 智谱智能索引配置
+zhipu_index:
+  api_key: "eea99a8f9f744660b103be682872628b.rGUarSr2TTOBe3FA"
+  proxy: "http://127.0.0.1:7890"
+  model: "embedding-2"
+  
+  # 索引功能
+  capabilities:
+    - semantic_parsing    # 语义解析
+    - intent_extraction   # 意图提取
+    - entity_recognition  # 实体识别
+    - relation_mining     # 关系挖掘
+    - causal_inference    # 因果推理
+  
+  # 智能能力
+  intelligence:
+    - active_association  # 主动联想
+    - conflict_detection  # 冲突检测
+    - prediction_loading  # 预测预加载
+    - personality_abstraction # 人格抽象
+
+# 记忆调度系统
+memory_scheduler:
+  # 调度策略
+  strategies:
+    - priority: "work_first"     # 优先工作记忆
+    - recall: "cross_layer"      # 跨层召回
+    - ranking: "weighted_multi"  # 多因素加权排序
+  
+  # 调度规则
+  rules:
+    - name: "task_focus"
+      condition: "has_active_task"
+      action: "load_work_memory"
+    
+    - name: "semantic_trigger"
+      condition: "zhipu_detects_association"
+      action: "preload_related"
+    
+    - name: "prediction_based"
+      condition: "context_suggests_next"
+      action: "predictive_loading"
+  
+  # 调度频率
+  scheduling_interval: 300  # 每5分钟调度一次
+
+# 记忆处理流程
+processing_pipeline:
+  steps:
+    - "semantic_parsing"      # 语义解析
+    - "intent_extraction"     # 意图提取
+    - "cross_layer_recall"    # 跨层召回
+    - "causal_reasoning"      # 因果推理
+    - "conflict_check"        # 冲突检查
+    - "weighted_ranking"      # 加权排序
+    - "predictive_preload"    # 预测预加载
+    - "coherent_output"       # 连贯输出
+    - "new_memory_write"      # 新记忆写入
+    - "sync_zhipu_index"     # 同步智谱索引
+
+# 后台任务
+background_tasks:
+  daily:
+    - name: "conflict_self_check"
+      time: "02:00"
+      enabled: true
+    
+    - name: "rule_personality_abstraction"
+      time: "03:00"
+      enabled: true
+    
+    - name: "memory_strength_decay"
+      time: "04:00"
+      enabled: true
+    
+    - name: "long_term_distillation"
+      time: "05:00"
+      enabled: true
+  
+  hourly:
+    - name: "synapse_weight_update"
+      interval: 3600
+      enabled: true
+    
+    - name: "value_alignment_check"
+      interval: 7200
+      enabled: true
+
+# 系统能力目标
+capability_goals:
+  - "从被动检索升级为主动思考、回忆、联想"
+  - "支持模糊提问、潜台词理解、跨时间跨主题关联"
+  - "具备自我学习、自我强化、自我修正能力"
+  - "记忆体系会随交互不断成长、变聪明"
+  - "接近意识上传级别的数字记忆与数字人格"
+
+# 性能指标
+performance_metrics:
+  recall:
+    accuracy: ">85%"
+    latency: "<2s"
+    coverage: ">90%"
+  
+  memory:
+    compression_ratio: "10:1"
+    distillation_quality: "规则化程度 >80%"
+    conflict_resolution: "成功率 >95%"
+  
+  intelligence:
+    active_association: "触发准确率 >70%"
+    prediction_accuracy: "预判准确率 >60%"
+    causal_reasoning: "逻辑连贯性 >75%"
+
+# 升级路径
+upgrade_path:
+  phase1: "实现分层架构 + 基础调度"
+  phase2: "集成智谱智能索引"
+  phase3: "实现动态突触权重"
+  phase4: "添加价值对齐层"
+  phase5: "实现超级智能能力"
+  phase6: "完整意识上传模拟"
+
+# 与现有系统集成
+integration:
+  openclaw:
+    mode: "parallel"
+    weights:
+      memflow_advanced: 0.8
+      openclaw_basic: 0.2
+    
+    sync:
+      memory_files: true
+      search_index: true
+      user_preferences: true
+  
+  # 数据迁移
+  migration:
+    source: "~/.openclaw/workspace/memory"
+    target: "./memory/2_medium"
+    strategy: "gradual"
+    backup: true
