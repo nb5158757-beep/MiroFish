@@ -1,0 +1,89 @@
+# 并行运行配置
+# MemFlow AI 与 OpenClaw memory_search 并行运行
+
+# 运行模式
+mode: parallel
+
+# 并行配置
+parallel:
+  # 搜索请求分发
+  requestRouting:
+    default: both           # 同时发送给两个系统
+    fallback: memflow       # 失败时回退到MemFlow AI
+  
+  # 结果合并策略
+  resultMerge:
+    strategy: weighted      # 加权合并
+    weights:
+      memflow: 0.7          # MemFlow AI权重
+      openclaw: 0.3         # OpenClaw权重
+    deduplicate: true       # 去重
+    maxTotalResults: 15     # 合并后最大结果数
+  
+  # 性能监控
+  monitoring:
+    enabled: true
+    logComparisons: true
+    alertThreshold: 2000    # 响应时间警告阈值(ms)
+
+# MemFlow AI配置（独立运行）
+memflow:
+  embedding:
+    provider: zhipu
+    zhipu:
+      apiKey: "eea99a8f9f744660b103be682872628b.rGUarSr2TTOBe3FA"
+      proxy: "http://127.0.0.1:7890"
+      timeout: 30000
+  
+  search:
+    mode: hybrid
+    maxResults: 10
+    similarityThreshold: 0.5
+  
+  database:
+    path: "./data/memflow.db"
+    autoVacuum: true
+
+# OpenClaw配置（保持原样）
+openclaw:
+  # 使用系统默认配置
+  useSystemConfig: true
+  fallbackOnError: true    # OpenClaw失败时自动回退
+
+# 对比分析
+comparison:
+  enabled: true
+  autoCompareQueries: true
+  comparisonInterval: 3600000  # 每小时自动对比一次
+  metrics:
+    - responseTime
+    - resultCount
+    - resultRelevance
+    - userFeedback
+
+# 用户反馈
+feedback:
+  enabled: true
+  # 在结果中询问用户偏好
+  askForPreference: true
+  preferenceThreshold: 10   # 收集10次反馈后调整权重
+
+# 自动优化
+autoOptimization:
+  enabled: true
+  adjustWeights: true       # 根据反馈自动调整权重
+  adjustThreshold: 0.1      # 权重调整阈值
+  optimizationInterval: 86400000  # 每天优化一次
+
+# 日志记录
+logging:
+  level: info
+  comparisonLog: "./logs/comparison.log"
+  performanceLog: "./logs/performance.log"
+  userFeedbackLog: "./logs/feedback.log"
+
+# 数据保留
+dataRetention:
+  comparisonResults: 30     # 保留30天对比结果
+  performanceMetrics: 7     # 保留7天性能指标
+  userFeedback: 90          # 保留90天用户反馈
