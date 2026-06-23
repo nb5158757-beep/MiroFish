@@ -1,0 +1,84 @@
+# MemFlow AI 配置文件
+# 智谱AI集成配置
+
+# 嵌入模型配置
+embedding:
+  # 提供商: zhipu, openai, local
+  provider: zhipu
+  
+  # 智谱AI特定配置
+  zhipu:
+    apiKey: "eea99a8f9f744660b103be682872628b.rGUarSr2TTOBe3FA"  # 你的智谱AI密钥
+    baseUrl: "https://open.bigmodel.cn/api/paas/v4"
+    model: "embedding-2"
+    proxy: ""  # 已禁用代理，直连智谱API
+    timeout: 30000  # 请求超时（毫秒）
+  
+  # 缓存配置
+  cache:
+    enabled: true
+    size: 1000      # 缓存条目数
+    ttl: 3600000    # 缓存有效期（毫秒，1小时）
+
+# 记忆存储配置
+memory:
+  # 存储类型: sqlite, json, memory
+  storage: sqlite
+  
+  # SQLite配置
+  sqlite:
+    path: "./data/memflow.db"
+    autoVacuum: true
+    journalMode: "WAL"
+  
+  # 索引配置
+  indexing:
+    chunkSize: 1000     # 文本分块大小
+    overlap: 200        # 分块重叠大小
+    minChunkLength: 50  # 最小分块长度
+
+# 搜索配置
+search:
+  # 相似度阈值
+  similarityThreshold: 0.7
+  
+  # 返回结果数量
+  maxResults: 10
+  
+  # 搜索模式: semantic, hybrid, keyword
+  mode: hybrid
+  
+  # 混合搜索权重
+  weights:
+    semantic: 0.7
+    keyword: 0.3
+
+# 系统配置
+system:
+  # 日志级别: debug, info, warn, error
+  logLevel: info
+  
+  # 性能监控
+  monitoring:
+    enabled: true
+    interval: 60000  # 监控间隔（毫秒）
+  
+  # 自动维护
+  maintenance:
+    autoVacuum: true
+    vacuumInterval: 86400000  # 24小时
+    cleanupOldData: true
+    dataRetentionDays: 30
+
+# 集成配置
+integrations:
+  # OpenClaw集成
+  openclaw:
+    enabled: true
+    memoryPath: "../memory"  # OpenClaw记忆文件路径
+    autoSync: true
+    syncInterval: 300000  # 同步间隔（5分钟）
+  
+  # 可以添加其他集成
+  # telegram: ...
+  # discord: ...
